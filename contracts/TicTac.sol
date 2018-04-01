@@ -82,6 +82,13 @@ contract TicTac {
         }
     }
 
+    //Checks for all the possible positions from which a player can win
+    //  00  01  02
+    //  10  11  12
+    //  20  21  22
+    //[00,11,22], [02,11,20] (Diagonal)
+    //[00,01,02], [10,11,12], [20,21,22] (Horizontal)
+    //[00,10,20], [01,11,21], [02,12,22] (Vertical)
     function didIWin(address _player) internal view returns(bool) {
         if (isItAScore(0, 1, 2, 0, 1, 2, _player) || isItAScore(0, 1, 2, 2, 1, 0, _player)) {
             return true;
@@ -94,6 +101,7 @@ contract TicTac {
         return false;
     }
 
+    //Assists didIWin, checks for provided position from didIWin
     function isItAScore(uint _r1, uint _r2, uint _r3, uint _c1, uint _c2, uint _c3, address _player) internal view returns(bool) {
         if (boardOne.boardPositions[_r1][_c1] == _player && boardOne.boardPositions[_r2][_c2] == _player && boardOne.boardPositions[_r3][_c3] == _player) {
             return true;
@@ -102,6 +110,8 @@ contract TicTac {
         }
     }
 
+    //This method would assist in case a UI is developed on top of this
+    //Provides the occupied positions on the board and the respective players
     function getBoardPositions () public view returns (address[]) {
         address[] memory boardState = new address[](9);
         uint counter = 0;
@@ -114,18 +124,22 @@ contract TicTac {
         return (boardState);
     }
 
+    //returns current board state
     function getBoardState () public view returns (BoardState) {
         return(boardOne.stateOfBoard);
     }
 
+    //returns current game state
     function getGameState () public view returns (GameState) {
         return(boardOne.stateOfGame);
     }
 
+    //returns next player
     function getNextPlayer () public view returns (address) {
         return(boardOne.nextMove);
     }
 
+    //reset board
     function resetBoard () public onlyAdmin {
         delete boardOne;
     } 
