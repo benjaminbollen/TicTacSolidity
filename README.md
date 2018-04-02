@@ -7,3 +7,4 @@
 <code>truffle develop</code>  
 <code>compile</code>  
 <code>migrate</code>
+<code>test</code>
