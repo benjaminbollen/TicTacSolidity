@@ -48,13 +48,18 @@ contract TicTac {
     //When board is occupied, the player who initiates this method gets the first move.
     function startNewGame() public onlyPlayers {
         require(boardOne.stateOfBoard == BoardState.occupied);
+// To prevent a player to grab the next move during the game this can only be called
+// when the game is not yet running
+// SHOULD require(boardOne.stateOfGame == GameState.notStarted);
         boardOne.nextMove = msg.sender;
         boardOne.stateOfGame = GameState.running;
     }
 
     //Players provide the row and column of the box they want to make the move in
+// uint could be restricted to a uint8 eg
     function makeAMove(uint _row, uint _col) public onlyPlayers {
         require(boardOne.stateOfBoard == BoardState.occupied);              //board should be occupied
+// a modifier CurrentPlayer would simplify this requirement and OnlyPLayers
         require(msg.sender == boardOne.nextMove);                           //the player invoking this method should have the legal next move
         require(_row<=2 && _row>=0 && _col<=2 && _col>=0);                  //the box provided should not be out of bounds 
         require(boardOne.stateOfGame == GameState.running);                 //the game should be running

@@ -115,6 +115,41 @@ contract('TicTac', function(accounts) {
         });
     });
 
+// game corruption
+    it("SHOULD FAIL, a player can not monopolise the gameplay", function() {
+        var account_one = accounts[0];
+        var account_two = accounts[1];
+        var ticTacContract;
+
+        return TicTac.new().then(function(instance) {
+            ticTacContract = instance;
+            return ticTacContract.joinGame({from: account_one});
+        }).then(function(){
+            return ticTacContract.joinGame({from: account_two});
+        }).then(function(){
+            return ticTacContract.startNewGame({from: account_one});
+        }).then(function(){
+            return ticTacContract.getNextPlayer.call();
+        }).then(function(playerOne) {
+            assert.equal(playerOne, account_one, "Player wasn't assigned correctly");
+        }).then(function(){
+            return ticTacContract.makeAMove(0,0,{from: account_one});
+// corrupt the game play
+        }).then(function(){
+            return ticTacContract.startNewGame({from: account_one});
+        }).then(function(){
+                return ticTacContract.makeAMove(0,1,{from: account_one});
+        }).then(function(){
+            return ticTacContract.startNewGame({from: account_one});
+        }).then(function(){
+                return ticTacContract.makeAMove(0,2,{from: account_one});
+        }).then(function(){
+                return ticTacContract.getGameState.call();
+        }).then(function(stateOfGame) {
+            assert.equal(stateOfGame, 3, "Player one did not win");
+        });
+    });
+
     it("Game tied", function() {
         var account_one = accounts[0];
         var account_two = accounts[1];
